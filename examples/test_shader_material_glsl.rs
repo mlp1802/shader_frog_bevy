@@ -33,6 +33,7 @@ fn setup(
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         material: materials.add(CustomMaterial {
             color: Color::BLUE,
+            z_coord: 1.0,
             color_texture: Some(asset_server.load("branding/icon.png")),
             alpha_mode: AlphaMode::Blend,
         }),
@@ -52,6 +53,8 @@ fn setup(
 pub struct CustomMaterial {
     #[uniform(0)]
     color: Color,
+    #[uniform(0)]
+    z_coord: f32,
     #[texture(1)]
     #[sampler(2)]
     color_texture: Option<Handle<Image>>,
