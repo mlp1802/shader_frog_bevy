@@ -1,25 +1,4 @@
 //https://shaderfrog.com/app/view/5491
-precision highp float;
-precision highp int;
-
-// Default THREE.js uniforms available to both fragment and vertex shader
-uniform mat4 modelMatrix;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-uniform mat3 normalMatrix;
-
-uniform float scale;
-uniform float displacement;
-uniform float time;
-uniform float speed;
-
-attribute vec3 position;
-attribute vec3 normal;
-varying float vNoise;
-varying vec3 vPosition;
-
-//
 // GLSL textureless classic 3D noise "cnoise",
 // with an RSL-style periodic variant "pnoise".
 // Author:  Stefan Gustavson (stefan.gustavson@liu.se)
@@ -31,7 +10,68 @@ varying vec3 vPosition;
 // Copyright (c) 2011 Stefan Gustavson. All rights reserved.
 // Distributed under the MIT license. See LICENSE file.
 // https://github.com/ashima/webgl-noise
-//
+
+
+precision highp float;
+precision highp int;
+
+// Default THREE.js variables, this is coming from three.js framework, not the user. ** REPLACED BY NEXT layout code that is Bevys way of doing the same 
+//uniform mat4 modelMatrix;
+//uniform mat4 modelViewMatrix;
+//uniform mat4 projectionMatrix;
+//uniform mat4 viewMatrix; //NOT USED IN THIS SHADER
+//uniform mat3 normalMatrix; //NOT USED IN THIS SHADER
+
+//** THIS IS COMING FROM BEVY. Order and type is important, name is not
+layout(set = 0, binding = 0) uniform CameraViewProj {
+  mat4 modelMatrix;
+  mat4 modelViewMatrix;
+  mat4 projectionMatrix;
+  mat4 viewMatrix;
+  vec3 worldPosition;
+  float width;
+  float height;
+};
+// This is the default CameraViewProj from Bevy, still figuring out which values corresponds to which value in THREE.js
+// layout(set = 0, binding = 0) uniform CameraViewProj {
+//  mat4 ViewProj;
+//  mat4 View;
+//  mat4 InverseView;
+//  mat4 Projection;
+//  vec3 WorldPosition;
+//  float width;
+//  float height;
+//};
+
+//** THREE.JS uniform variables (user arguments 
+// uniform float displacement;
+// uniform float time;
+// uniform float speed;
+
+//** BEVY VARIABLES, coming from the CustomMaterial struct..same variables must be in the Rust struct of the same name.
+layout(set = 1, binding = 0) uniform CustomMaterial {
+  float scale;
+  float displacement;
+  float time;
+  float speed;
+};
+
+//THREE JS ATTRIBUTES, the actual vertices and normals
+// attribute vec3 position;
+// attribute vec3 normal;
+
+//Attributes in Bevy (vertices and normals)
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+
+//THREE JS values that will be passed on to the fragment shader
+// varying float vNoise;
+// varying vec3 vPosition;
+
+//Same thing in bevy, just using location out syntax, since "varying" is not used in shaders anymore.
+layout(location = 1) out float vNoise;
+layout(location = 1) out vec3 vPosition;
+
 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;

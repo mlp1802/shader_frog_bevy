@@ -1,8 +1,7 @@
 #version 450
-//https://shaderfrog.com/app/view/5491 
 layout(location = 0) in vec3 Vertex_Position;
 layout(location = 1) in vec3 Vertex_Normal;
-layout(location = 2) in vec2 Vertex_Uv;
+layout(location = 2) in vec2 Vertex_Uv_;
 
 layout(location = 0) out vec2 v_Uv;
 layout(location = 1) out float test_out;
@@ -27,7 +26,7 @@ layout(set = 1, binding = 0) uniform CustomMaterial {
   float z_coord;
 };
 void main() {
-    v_Uv = Vertex_Uv;
+    v_Uv = Vertex_Uv_;
     //this is a variable being passed on the the vertex shader
     test_out = 23;
     gl_Position = ViewProj * Model * vec4(Vertex_Position, z_coord); 
