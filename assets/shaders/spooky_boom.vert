@@ -15,7 +15,7 @@
 precision highp float;
 precision highp int;
 
-// Default THREE.js variables, this is coming from three.js framework, not the user. ** REPLACED BY NEXT layout code that is Bevys way of doing the same 
+// Default THREE.js variables, this is coming from three.js framework, they are not defined by the user. ** REPLACED BY NEXT layout code that is Bevys way of doing the same
 //uniform mat4 modelMatrix;
 //uniform mat4 modelViewMatrix;
 //uniform mat4 projectionMatrix;
@@ -24,9 +24,9 @@ precision highp int;
 
 //** THIS IS COMING FROM BEVY. Order and type is important, name is not
 layout(set = 0, binding = 0) uniform CameraViewProj {
-  mat4 modelMatrix;
-  mat4 modelViewMatrix;
   mat4 projectionMatrix;
+  mat4 modelViewMatrix;
+  mat4 modelMatrix;
   mat4 viewMatrix;
   vec3 worldPosition;
   float width;
@@ -43,17 +43,21 @@ layout(set = 0, binding = 0) uniform CameraViewProj {
 //  float height;
 //};
 
-//** THREE.JS uniform variables (user arguments 
+//** THREE.JS uniform variables (user arguments
 // uniform float displacement;
 // uniform float time;
 // uniform float speed;
 
 //** BEVY VARIABLES, coming from the CustomMaterial struct..same variables must be in the Rust struct of the same name.
 layout(set = 1, binding = 0) uniform CustomMaterial {
+  vec3 color;
   float scale;
   float displacement;
   float time;
   float speed;
+  float hellScale;
+  vec3 hellColor;
+
 };
 
 //THREE JS ATTRIBUTES, the actual vertices and normals
@@ -70,7 +74,7 @@ layout(location = 1) in vec3 normal;
 
 //Same thing in bevy, just using location out syntax, since "varying" is not used in shaders anymore.
 layout(location = 1) out float vNoise;
-layout(location = 1) out vec3 vPosition;
+layout(location = 2) out vec3 vPosition;
 
 
 vec3 mod289(vec3 x) {
@@ -158,7 +162,7 @@ float cnoise(vec3 P) {
     vec3 fade_xyz = fade(Pf0);
     vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
     vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
-    float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+    float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
     return 2.2 * n_xyz;
 }
 
@@ -167,7 +171,6 @@ float cnoise(vec3 P) {
 float Perlin4D( vec4 P )
 {
     //  https://github.com/BrianSharpe/Wombat/blob/master/Perlin4D.glsl
-
     // establish our grid cell and unit position
     vec4 Pi = floor(P);
     vec4 Pf = P - Pi;
@@ -268,4 +271,3 @@ void main() {
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition,1.0);
 }
-

@@ -3,26 +3,51 @@ precision highp float;
 precision highp int;
 
 // Default THREE.js uniforms available to both fragment and vertex shader
-uniform mat4 modelMatrix;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-uniform mat3 normalMatrix;
+//uniform mat4 modelMatrix;
+//uniform mat4 modelViewMatrix;
+//uniform mat4 projectionMatrix;
+//uniform mat4 viewMatrix;
+//uniform mat3 normalMatrix;
+//The same one, using Bevy variables
+layout(set = 0, binding = 0) uniform CameraViewProj {
+  mat4 projectionMatrix;
+  mat4 modelViewMatrix;
+  mat4 modelMatrix;
+  mat4 viewMatrix;
+  vec3 worldPosition;
+  float width;
+  float height;
+};
+//** BEVY VARIABLES, coming from the CustomMaterial struct..same variables must be in the Rust struct of the same name.
+layout(set = 1, binding = 0) uniform CustomMaterial {
 
+  vec3 color;
+  float scale;
+  float displacement;
+  float time;
+  float speed;
+  float hellScale;
+  vec3 hellColor;
+
+};
+
+layout(location = 0) out vec4 o_Target;
 // Default uniforms provided by ShaderFrog.
-uniform vec3 cameraPosition;
-uniform float time;
-uniform float hellScale;
-uniform vec3 hellColor;
+//uniform vec3 cameraPosition;
+//uniform float time;
+//uniform float hellScale;
+//uniform vec3 hellColor;
 
 // Example varyings passed from the vertex shader
-varying vec3 vPosition;
-varying vec2 vUv;
-varying vec2 vUv2;
+//varying vec3 vPosition;
+//varying vec2 vUv;
+//varying vec2 vUv2;
+//varying float vNoise;
+layout(location = 1) in float vNoise;
+layout(location = 2) in vec3 vPosition;
 
-uniform vec3 color;
+//uniform vec3 color;
 
-varying float vNoise;
 
 //
 //  Wombat
@@ -175,6 +200,7 @@ void main() {
 	vec3 col = (hellColor * 0.1) / noiseVal;
 	col = pow(col, vec3(1.6));
 
-    gl_FragColor = vec4(color * clamp( vNoise, 0.0, 1.0 ) + col, 1.0);
+//    gl_FragColor = vec4(color * clamp( vNoise, 0.0, 1.0 ) + col, 1.0);
+    o_Target = vec4(color * clamp( vNoise, 0.0, 1.0 ) + col, 1.0);
 
 }

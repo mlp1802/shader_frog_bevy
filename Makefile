@@ -5,4 +5,7 @@ run-release:
 run-test:
 	cargo run --example test_shader_material_glsl
 
+run-spooky-boom-shader:
+	cargo run --example spooky_boom
+
 

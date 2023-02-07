@@ -17,9 +17,20 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(MaterialPlugin::<CustomMaterial>::default())
         .add_startup_system(setup)
+        .add_system(update_material)
         .run();
 }
 
+fn update_material(
+    mut materials: ResMut<Assets<CustomMaterial>>,
+    custom_materials: Query<&mut Handle<CustomMaterial>>,
+) {
+    //
+    for m in &custom_materials {
+        let c_mat = materials.get_mut(m).unwrap();
+        c_mat.time = c_mat.time + 0.001;
+    }
+}
 /// set up a simple 3D scene
 fn setup(
     mut commands: Commands,
@@ -32,9 +43,15 @@ fn setup(
         mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         material: materials.add(CustomMaterial {
+            // color_texture: Some(asset_server.load("branding/icon.png")),
+            // alpha_mode: AlphaMode::Blend,
             color: Color::BLUE,
-            color_texture: Some(asset_server.load("branding/icon.png")),
-            alpha_mode: AlphaMode::Blend,
+            scale: 2.0,
+            displacement: 1.0,
+            time: 24.0,
+            speed: 1.0,
+            hellScale: 1.0,
+            hellColor: Color::BLUE,
         }),
         ..default()
     });
@@ -52,10 +69,22 @@ fn setup(
 pub struct CustomMaterial {
     #[uniform(0)]
     color: Color,
-    #[texture(1)]
-    #[sampler(2)]
-    color_texture: Option<Handle<Image>>,
-    alpha_mode: AlphaMode,
+    #[uniform(0)]
+    scale: f32,
+    #[uniform(0)]
+    displacement: f32,
+    #[uniform(0)]
+    time: f32,
+    #[uniform(0)]
+    speed: f32,
+    #[uniform(0)]
+    hellScale: f32,
+    #[uniform(0)]
+    hellColor: Color,
+    //   #[texture(1)]
+    //   #[sampler(2)]
+    //   color_texture: Option<Handle<Image>>,
+    //   alpha_mode: AlphaMode,
 }
 
 /// The Material trait is very configurable, but comes with sensible defaults for all methods.
@@ -71,7 +100,8 @@ impl Material for CustomMaterial {
     }
 
     fn alpha_mode(&self) -> AlphaMode {
-        self.alpha_mode
+        //self.alpha_mode
+        AlphaMode::Blend
     }
 
     // Bevy assumes by default that vertex shaders use the "vertex" entry point
