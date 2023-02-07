@@ -67,6 +67,7 @@ layout(set = 1, binding = 0) uniform CustomMaterial {
 //Attributes in Bevy (vertices and normals)
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 Vertex_Uv;
 
 //THREE JS values that will be passed on to the fragment shader
 // varying float vNoise;
@@ -75,7 +76,7 @@ layout(location = 1) in vec3 normal;
 //Same thing in bevy, just using location out syntax, since "varying" is not used in shaders anymore.
 layout(location = 1) out float vNoise;
 layout(location = 2) out vec3 vPosition;
-
+layout(location = 0) out vec2 vUv; 
 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -256,6 +257,7 @@ float Perlin4D( vec4 P )
 void main() {
 
     vPosition = position;
+    vUv = Vertex_Uv; 
     vNoise = cnoise(normalize(position) * scale + ( time * speed ) );
     vec3 pos = position + normal * vNoise * vec3(displacement);
     float noiseVal = noise(vec4(pos * 8.0, 0.3*time));
@@ -269,5 +271,5 @@ void main() {
             r * cos(theta)
         );
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition,1.0);
+    gl_Position = projectionMatrix * viewMatrix * vec4(vPosition,0.5);
 }

@@ -28,7 +28,7 @@ fn update_material(
     //
     for m in &custom_materials {
         let c_mat = materials.get_mut(m).unwrap();
-        c_mat.time = c_mat.time + 0.001;
+        c_mat.time = c_mat.time + 0.1;
     }
 }
 /// set up a simple 3D scene
@@ -40,25 +40,29 @@ fn setup(
 ) {
     // cube
     commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        mesh: meshes.add(Mesh::from(shape::UVSphere {
+            radius: 1.0,
+            sectors: 150,
+            stacks: 150,
+        })),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         material: materials.add(CustomMaterial {
             // color_texture: Some(asset_server.load("branding/icon.png")),
             // alpha_mode: AlphaMode::Blend,
-            color: Color::BLUE,
-            scale: 2.0,
-            displacement: 1.0,
-            time: 24.0,
-            speed: 1.0,
-            hellScale: 1.0,
-            hellColor: Color::BLUE,
+            color: Color::YELLOW,
+            scale: 0.1,
+            displacement: 0.2,
+            time: 0.0,
+            speed: 0.1,
+            hellScale: 2.0,
+            hellColor: Color::PINK,
         }),
         ..default()
     });
 
     // camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: Transform::from_xyz(0.0, 0.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
     });
 }
@@ -92,10 +96,12 @@ pub struct CustomMaterial {
 /// When using the GLSL shading language for your shader, the specialize method must be overridden.
 impl Material for CustomMaterial {
     fn vertex_shader() -> ShaderRef {
+        //ShaderRef::Default
         "shaders/spooky_boom.vert".into()
     }
 
     fn fragment_shader() -> ShaderRef {
+        //ShaderRef::Default
         "shaders/spooky_boom.frag".into()
     }
 

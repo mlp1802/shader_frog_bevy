@@ -43,6 +43,7 @@ layout(location = 0) out vec4 o_Target;
 //varying vec2 vUv;
 //varying vec2 vUv2;
 //varying float vNoise;
+layout(location = 0) in vec2 vUv;
 layout(location = 1) in float vNoise;
 layout(location = 2) in vec3 vPosition;
 
@@ -201,6 +202,9 @@ void main() {
 	col = pow(col, vec3(1.6));
 
 //    gl_FragColor = vec4(color * clamp( vNoise, 0.0, 1.0 ) + col, 1.0);
-    o_Target = vec4(color * clamp( vNoise, 0.0, 1.0 ) + col, 1.0);
+   o_Target = vec4(color * clamp( vNoise, 0.0, 1.0 ) + col, 1.0);
+  //o_Target = color;
+
+    //o_Target = vUv;// vec3(vUv, 1.0);
 
 }
