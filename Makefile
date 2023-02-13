@@ -8,4 +8,7 @@ run-test:
 run-spooky-boom-shader:
 	cargo run --example spooky_boom
 
+run-simple-reflection-shader:
+	cargo run --example simple_reflection
+
 

@@ -1,3 +1,4 @@
+//Original code https://shaderfrog.com/app/view/4568
 //! A shader that uses the GLSL shading language.
 
 use bevy::{
@@ -28,7 +29,7 @@ fn update_material(
     //
     for m in &custom_materials {
         let c_mat = materials.get_mut(m).unwrap();
-        c_mat.time = c_mat.time + 0.1;
+        //c_mat.time = c_mat.time + 0.1;
     }
 }
 /// set up a simple 3D scene
@@ -49,13 +50,9 @@ fn setup(
         material: materials.add(CustomMaterial {
             // color_texture: Some(asset_server.load("branding/icon.png")),
             // alpha_mode: AlphaMode::Blend,
-            color: Color::YELLOW,
-            scale: 0.1,
-            displacement: 0.2,
-            time: 0.0,
-            speed: 0.1,
-            hellScale: 2.0,
-            hellColor: Color::PINK,
+            mirror_reflection: 0.1,
+            cameraPosition: Vec3::ZERO,
+            color_texture: Some(asset_server.load("branding/fire.jpg")),
         }),
         ..default()
     });
@@ -72,23 +69,12 @@ fn setup(
 #[uuid = "4ee9c363-1124-4113-890e-199d81b00281"]
 pub struct CustomMaterial {
     #[uniform(0)]
-    color: Color,
+    mirror_reflection: f32,
     #[uniform(0)]
-    scale: f32,
-    #[uniform(0)]
-    displacement: f32,
-    #[uniform(0)]
-    time: f32,
-    #[uniform(0)]
-    speed: f32,
-    #[uniform(0)]
-    hellScale: f32,
-    #[uniform(0)]
-    hellColor: Color,
-    //   #[texture(1)]
-    //   #[sampler(2)]
-    //   color_texture: Option<Handle<Image>>,
-    //   alpha_mode: AlphaMode,
+    cameraPosition: Vec3,
+    #[texture(1)]
+    #[sampler(2)]
+    color_texture: Option<Handle<Image>>,
 }
 
 /// The Material trait is very configurable, but comes with sensible defaults for all methods.
@@ -97,12 +83,12 @@ pub struct CustomMaterial {
 impl Material for CustomMaterial {
     fn vertex_shader() -> ShaderRef {
         //ShaderRef::Default
-        "shaders/spooky_boom.vert".into()
+        "shaders/simple_reflection.vert".into()
     }
 
     fn fragment_shader() -> ShaderRef {
         //ShaderRef::Default
-        "shaders/spooky_boom.frag".into()
+        "shaders/simple_reflection.frag".into()
     }
 
     fn alpha_mode(&self) -> AlphaMode {
